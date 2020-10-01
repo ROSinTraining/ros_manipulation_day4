@@ -12,4 +12,6 @@
     </node>
 
     <node pkg="learning_tf" type="tf_listener_example.py"  name="listener" output="screen"/-->
+
+    <!--node pkg="tf2_ros" type="static_transform_publisher" name="turtle1_cam_frame" args="0.1 0.0 0.0 -1.57 0.0 0.0  turtle1 turtle_cam" /-->
 </launch>
