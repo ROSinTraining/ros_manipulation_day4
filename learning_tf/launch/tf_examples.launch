@@ -1,0 +1,7 @@
+<launch>
+
+    <node name="tf_broadcaster" pkg="learning_tf" type="tf_broadcaster_example.py" output="screen">
+        <param name="turtle" value="turtle1" type="string" />
+    </node>
+
+</launch>
