@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import rospy
@@ -39,13 +39,15 @@ def set_pose(xyz = [0, 0, 0], q = [0, 0, 0, 1]):
 
 #confirm if plan should be executed
 def plan_accepted():
-	return raw_input("Do you want to execute the plan [y] or replan [n]? ") == "y"
+	return input("Do you want to execute the plan [y] or replan [n]? ") == "y"
 
 #plan and execute to given pose; If plan is not confirmed plan again
 def plan_and_execute(group, pose):
 	group.set_pose_target(pose)
 	plan1 = group.plan()
+	group.execute(plan1, wait=True)
 	if plan_accepted():
+		#group.execute()
 		group.execute(plan1, wait=True)
 	else:
 		exit()
