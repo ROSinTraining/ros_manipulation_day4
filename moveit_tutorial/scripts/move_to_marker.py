@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import rospy
@@ -8,10 +8,10 @@ from geometry_msgs.msg import Pose
 from ar_track_alvar_msgs.msg import AlvarMarkers
 
 #declare global variables
-world_frame = rospy.get_param('~/world_frame', "world")
-vel_scaling = rospy.get_param('~/vel_scaling', .3)
-home_position = rospy.get_param('~/home_position', [.4, .0, .3])
-home_orientation = rospy.get_param('~/home_orientation', [.0, .0, .0, .1])
+world_frame = "world"
+vel_scaling =  .3
+home_position = [.4, .0, .3]
+home_orientation = [.0, .0, .0, .1]
 marker_pose = None
 
 #convert marker from camera frame to robot's base frame
@@ -32,21 +32,27 @@ def marker_cb(msg):
 
 #set Pose message through lists
 def set_pose(xyz = [0, 0, 0], q = [0, 0, 0, 1]):
-	pose = Pose()
-	pose.position.x, pose.position.y, pose.position.z = xyz
-	pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w = q
+	pose = Pose() 
+	pose.position.x = xyz[0]
+	pose.position.y = xyz[1]
+	pose.position.z = xyz[2]
+	pose.orientation.x = q[0]
+	pose.orientation.y = q[1]
+	pose.orientation.z = q[2]
+	pose.orientation.w = q[3]
 	return pose
 
 #confirm if plan should be executed
 def plan_accepted():
-	return raw_input("Do you want to execute the plan [y] or replan [n]? ") == "y"
+	return input("Do you want to execute the plan [y] or replan [n]? ") == "y"
 
 #plan and execute to given pose; If plan is not confirmed plan again
 def plan_and_execute(group, pose):
 	group.set_pose_target(pose)
-	plan1 = group.plan()
 	if plan_accepted():
-		group.execute(plan1, wait=True)
+		group.go(wait=True)
+		group.stop()
+		group.clear_pose_targets()
 	else:
 		exit()
 
@@ -57,6 +63,7 @@ def main():
 
 	group = moveit_commander.MoveGroupCommander("arm")
 	group.set_max_velocity_scaling_factor(vel_scaling)
+
 
 	#while loop to move the robot to the found AR marker
 	while not rospy.is_shutdown():
